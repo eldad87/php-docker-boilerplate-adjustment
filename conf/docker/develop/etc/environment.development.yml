@@ -1,0 +1,29 @@
+#######################################
+# Environment Configuration
+#  - feel free to edit -
+# -> for most changes you only have to
+#         docker-compose up -d
+#    to apply them
+#######################################
+
+#######################################
+# PHP Debugger (xdebug|blackfire|none)
+
+PHP_DEBUGGER=xdebug
+
+#######################################
+# Context environment
+
+# Symfony
+SYMFONY_ENV=dev
+SYMFONY_DEBUG=0
+
+WEB_DOCUMENT_ROOT=/app/web/
+WEB_DOCUMENT_INDEX=app_dev.php
+WEB_ALIAS_DOMAIN=symfony.dev
+CLI_SCRIPT=/bin/console
+
+MYSQL_ROOT_PASSWORD=symfony
+MYSQL_USER=symfony
+MYSQL_PASSWORD=symfony
+MYSQL_DATABASE=symfony

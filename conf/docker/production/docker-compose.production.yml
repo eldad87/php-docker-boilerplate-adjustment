@@ -1,0 +1,58 @@
+version: '2'
+services:
+  #######################################
+  # PHP application Docker container
+  #######################################
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    links:
+      - mysql
+      - mail
+      - redis
+    ports:
+      - "8000:80"
+      - "8443:443"
+      - "10022:22"
+    volumes:
+      - ./app/:/app/
+    volumes_from:
+      - storage
+    env_file:
+      - etc/environment.yml
+      - etc/environment.production.yml
+
+  #######################################
+  # MySQL server
+  #######################################
+  mysql:
+    build:
+      context: docker/mysql/
+      dockerfile: Percona-5.7.Dockerfile
+    volumes_from:
+      - storage
+    env_file:
+      - etc/environment.yml
+      - etc/environment.production.yml
+
+  #######################################
+  # Redis
+  #######################################
+  redis:
+    build:
+      context: docker/redis/
+    volumes_from:
+      - storage
+    env_file:
+      - etc/environment.yml
+      - etc/environment.production.yml
+
+  #######################################
+  # Storage
+  #######################################
+  storage:
+    build:
+      context: docker/storage/
+    volumes:
+      - /storage

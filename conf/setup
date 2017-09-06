@@ -1,0 +1,65 @@
+###################################################
+# Start your project
+# Assuming your path is /var/www/project-name
+# Make sure to run ONLY the correct environment setup (develop or production)
+###################################################
+
+# ++++++++++++++++++++++++++++
+# Setup Docker
+# ++++++++++++++++++++++++++++
+cd /var/www/project-name
+git clone --recursive https://github.com/webdevops/php-docker-boilerplate.git docker
+cp conf/docker/bin/create-project.sh docker/bin/.
+
+# ++++++++++++++++++++++++++++
+# Docker configuration
+# ++++++++++++++++++++++++++++
+# !!! DEVELOP !!!
+cp conf/docker/develop/docker-compose.develop.yml docker/docker-compose.yml
+cp conf/docker/develop/Dockerfile.development docker/.
+cp conf/docker/develop/etc/environment.development.yml docker/etc/.
+cp conf/docker/develop/etc/php/development.ini docker/etc/php/.
+# !!! PRODUCTION !!!
+cp conf/docker/production/docker-compose.production.yml docker/docker-compose.yml
+cp conf/docker/production/Dockerfile.production docker/.
+cp conf/docker/production/etc/environment.production.yml docker/etc/.
+cp conf/docker/production/etc/php/production.ini docker/etc/php/.
+
+# ++++++++++++++++++++++++++++
+# Docker backup folder
+# ++++++++++++++++++++++++++++
+mv docker/backup backup
+ln -s ../backup docker/backup
+
+# ++++++++++++++++++++++++++++
+# Setup Symfony
+# ++++++++++++++++++++++++++++
+mv docker/app symfony
+ln -s ../symfony docker/app
+make --directory docker create symfony lts
+rm -rf symfony.*
+# !!! DEVELOP !!! - make sure it match the environment.development.yml
+cp conf/symfony/develop/app/config/parameters.yml symfony/app/config/.
+# Remove lines 13-19 from symfony/web/app_dev.php
+# !!! PRODUCTION !!! - make sure it match the environment.production.yml
+cp conf/symfony/production/app/config/parameters.yml symfony/app/config/.
+
+# ++++++++++++++++++++++++++++
+# Docker run
+# ++++++++++++++++++++++++++++
+cd docker
+docker-compose up -d
+
+# ++++++++++++++++++++++++++++
+# Symfony configuration
+# ++++++++++++++++++++++++++++
+# Update your system host file (add symfony.dev)
+sudo echo $(docker network inspect bridge | grep Gateway | grep -o -E '[0-9\.]+') "symfony.dev" >> /etc/hosts
+
+# Load DB structure
+docker exec -it docker_app_1 bash
+bin/console doctrine:database:create
+bin/console doctrine:schema:update --force
+bin/console doctrine:fixtures:load --no-interaction
+
+
