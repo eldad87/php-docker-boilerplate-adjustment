@@ -48,6 +48,7 @@ cp conf/symfony/production/app/config/parameters.yml symfony/app/config/.
 # Docker run
 # ++++++++++++++++++++++++++++
 cd docker
+# consider using "make rebuild"
 docker-compose up -d
 
 # ++++++++++++++++++++++++++++
