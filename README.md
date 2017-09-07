@@ -74,30 +74,29 @@ bin/console doctrine:fixtures:load --no-interaction
 ```
 
 # Useful commands
+__Need to run inside /var/www/project-name/docker/__
 ```bash
+# Enter /var/www/project-name/docker/
+$ cd /var/www/project-name/docker/
+ 
 # bash commands
-$ docker-compose exec php bash
+$ docker-compose exec app bash
  
 # Composer (e.g. composer update)
-docker-compose exec php composer update
+docker-compose exec app composer update
  
 # SF commands (Tips: there is an alias inside php container)
-docker-compose exec app php /app/bin/console cache:clear
- 
-# Same command by using alias
-docker-compose exec php bash
-bin/console cache:clear
+docker-compose exec app bin/console cache:clear 
  
 # Retrieve an IP Address (here for the nginx container)
 docker inspect --format '{{ .NetworkSettings.Networks.dockersymfony_default.IPAddress }}' $(docker ps -f name=nginx -q)
 docker inspect $(docker ps -f name=nginx -q) | grep IPAddress
  
 # MySQL commands
-docker-compose exec db mysql -uroot -p"root"
+docker-compose exec mysql mysql -uroot -p"symfony"
  
 # F***ing cache/logs folder
-sudo chmod -R 777 app/cache app/logs # Symfony2
-sudo chmod -R 777 var/cache var/logs var/sessions # Symfony3
+sudo chmod -R 777 var/cache var/logs var/sessions
  
 # Check CPU consumption
 docker stats $(docker inspect -f "{{ .Name }}" $(docker ps -q))
@@ -109,3 +108,5 @@ docker rm $(docker ps -aq)
 docker rmi $(docker images -q)
 ```
 
+# TODO
+! Bug - Why running "docker-compose exec app php /app/bin/console cache:clear" defect Cache/dev by setting the owen to root, instead of the host's username

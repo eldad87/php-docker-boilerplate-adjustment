@@ -10,5 +10,10 @@ RUN ln -sf /opt/docker/etc/cron/crontab /etc/cron.d/docker-boilerplate \
     && echo >> /opt/docker/etc/cron/crontab \
     && ln -sf /opt/docker/etc/php/production.ini /opt/docker/etc/php/php.ini
 
+# Set timezone
+RUN rm /etc/localtime
+RUN ln -s /usr/share/zoneinfo/UTC /etc/localtime
+RUN "date"
+
 # Configure volume/workdir
 WORKDIR /app/
