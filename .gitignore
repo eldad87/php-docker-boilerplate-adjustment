@@ -1,4 +1,6 @@
-/docker
+.DS_Store
+.idea
+/docker/*
 /symfony.*
 /backup/*
 .idea
