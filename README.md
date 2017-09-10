@@ -1,7 +1,15 @@
 # Info
 A docker/symfony docker using [This PHP docker boilerplate](https://github.com/webdevops/php-docker-boilerplate) and [This PHP docker boilerplate](https://github.com/maxpou/docker-symfony)
+TODO: Make into a Dockerfile
 
 # Setup
+## Windows
+Use Power Shell
+Use "move" instead of "mv" commands
+Use "mklink" run only in CMD instead of Power Shell
+# Remove-Item -Recurse -Force \path
+
+
 ## 1. Clone boilerplate
 Cloning include specific configuration
 ```bash
@@ -28,24 +36,52 @@ cp conf/docker/production/etc/php/production.ini docker/etc/php/.
 ```
 
 ## 3. Setup backup folder
+#### Linux:
 ```bash
 mv docker/backup backup
+# rm -rf docker/backup
 ln -s ../backup docker/backup
+```
+#### Windows:
+```bash
+move docker/backup backup
+# Remove-Item -Recurse -Force docker\backup
+mklink /J "docker\backup" "backup"
 ```
 
 ## 4. Setup Symfony
+### New project
+#### Linux
 ```bash
 mv docker/app symfony
 ln -s ../symfony docker/app
 make --directory docker create symfony lts
 rm -rf symfony.*
 ```
+#### Windows
+```bash
+TBD
+```
+
+### Existing project
+#### Linux
+```bash
+rm -rf docker/app 
+ln -s ../symfony docker/app
+```
+#### Windows
+```bash
+Remove-Item -Recurse -Force docker\app
+mklink /J "docker\app" "symfony"
+```
+
+Remove-Item -Recurse -Force docker\app
+
 ### Develop
 make sure it match the environment.development.yml
 ```bash
 cp conf/symfony/develop/app/config/parameters.yml symfony/app/config/.
 ```
-
 ### Production
 make sure it match the environment.production.yml
 ```bash
@@ -58,12 +94,19 @@ cd docker
 # consider using "make rebuild"
 docker-compose up -d
 ```
+### Existing project
+Load vendors
+```bash
+docker exec -it docker_app_1 bash
+composer install
+```
+
 
 ## 6. Add docker's domain to host file
+Linux only!
 ```bash
 sudo echo $(docker network inspect bridge | grep Gateway | grep -o -E '[0-9\.]+') "symfony.dev" >> /etc/hosts
 ```
-
 
 # Load DB structure
 ```bash
